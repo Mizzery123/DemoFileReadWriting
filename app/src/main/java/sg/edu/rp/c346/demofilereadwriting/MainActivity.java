@@ -33,30 +33,33 @@ public class MainActivity extends AppCompatActivity {
 
 btnRead = findViewById(R.id.btnRead);
 btnWrite = findViewById(R.id.btnWrite);
-        btnWrite = findViewById(R.id.btnWrite);
+
         tv = findViewById(R.id.tv);
 
-        if (checkPermission() == false){
+        if (checkPermission()){
+            folderLocation = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Folder";
+
+            File folder = new File(folderLocation);
+            if (folder.exists() == false){
+                boolean result = folder.mkdir();
+                if (result == true){
+                    Log.d("File Read/Write", "Folder created");
+                }
+            }
+
+        } else {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
         }
         //UI handlers to be defined
 
-        folderLocation = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Folder";
 
-        File folder = new File(folderLocation);
-        if (folder.exists() == false){
-            boolean result = folder.mkdir();
-            if (result == true){
-                Log.d("File Read/Write", "Folder created");
-            }
-        }
 
         btnWrite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Code for file writing
                 try{
-                    String folderLocation = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Folder";
+
                     File targetFile = new File(folderLocation, "data.txt");
                     FileWriter writer = new FileWriter(targetFile, true);
                     writer.write("Hello world" +"\n");
@@ -73,7 +76,7 @@ btnWrite = findViewById(R.id.btnWrite);
             @Override
             public void onClick(View v) {
                 //Code for file reading
-                String folderLocation = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Test";
+
 
                 File targetFile = new File(folderLocation, "data.txt");
                 if (targetFile.exists() == true) {
@@ -104,8 +107,8 @@ btnWrite = findViewById(R.id.btnWrite);
 
 
     private boolean checkPermission(){
-        int permissionCheck_Coarse = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION);
-        int permissionCheck_Fine = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION);
+        int permissionCheck_Coarse = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE);
+        int permissionCheck_Fine = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
         if (permissionCheck_Coarse == PermissionChecker.PERMISSION_GRANTED || permissionCheck_Fine == PermissionChecker.PERMISSION_GRANTED){
             return true;
